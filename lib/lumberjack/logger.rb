@@ -112,9 +112,13 @@ module Lumberjack
         end
       end
 
-      message = @_formatter.format(message)
       progname ||= self.progname
-      entry = LogEntry.new(time, severity, message, progname, $$, Lumberjack.unit_of_work_id)
+      entry = LogEntry.new(time,
+                           severity,
+                           @_formatter.call(severity, time, progname, message),
+                           progname,
+                           $$,
+                           Lumberjack.unit_of_work_id)
       begin
         device.write(entry)
       rescue => e
